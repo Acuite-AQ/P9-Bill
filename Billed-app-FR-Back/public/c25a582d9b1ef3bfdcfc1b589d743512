@@ -1,0 +1,11 @@
+  	const value = 'bonjour'
+		const foundRecipes = remainingRecipes.filter(item => item.name.toLowerCase().includes(value));
+    const foundIngredients = remainingRecipes.filter(item => item.ingredients.find(el => el.ingredient.toLowerCase().includes(value)));
+    const foundDescription = remainingRecipes.filter(item => item.description.toLowerCase().includes(value));
+
+    const results = [...new Set([...foundRecipes, ...foundIngredients, ...foundDescription])]
+    remainingRecipes = results
+
+let itemsRecipes = [];
+let remainingRecipes = [];
+let tagSelected = [];
