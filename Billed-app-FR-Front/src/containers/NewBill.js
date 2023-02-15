@@ -17,6 +17,7 @@ export default class NewBill {
   }
   handleChangeFile = e => {
     e.preventDefault()
+    // Ajout des conditions d'acceptation des fichiers
         const fileAlert = this.document.querySelector('.fileAlert')
         const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
         // array of authorized file
@@ -79,3 +80,5 @@ export default class NewBill {
     }
   }
 }
+
+

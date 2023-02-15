@@ -2,28 +2,15 @@
  * @jest-environment jsdom
  */
 
-import {
-  fireEvent,
-  screen,
-  waitFor
-} from "@testing-library/dom"
+import { fireEvent, screen, waitFor } from "@testing-library/dom"
 import BillsUI from "../views/BillsUI.js"
-import {
-  bills
-} from "../fixtures/bills.js"
-import {
-  ROUTES_PATH,
-  ROUTES
-} from "../constants/routes.js";
-import {
-  localStorageMock
-} from "../__mocks__/localStorage.js";
-import {
-  mockStore
-} from "../__mocks__/store.js";
+import { bills } from "../fixtures/bills.js"
+import { ROUTES_PATH, ROUTES } from "../constants/routes.js";
+import { localStorageMock } from "../__mocks__/localStorage.js";
+import mockStore from "../__mocks__/store.js";
 import Bills from "../containers/Bills.js";
-
 import router from "../app/Router.js";
+
 
 describe("Given I am connected as an employee", () => {
   describe("When I am on Bills Page", () => {
@@ -135,5 +122,41 @@ describe("When I navigate to Bills Page", () => {
     const getBills = jest.fn(() => bills.getBills())
     const value = await getBills()
     expect(getBills).toHaveBeenCalled()
+  })
+})
+
+describe("When an error occurs on API", () => {
+  beforeEach(() => {
+      jest.spyOn(mockStore, "bills")
+      Object.defineProperty(
+          window,
+          'localStorage', {
+              value: localStorageMock
+          }
+      )
+      const root = document.createElement("div")
+      root.setAttribute("id", "root")
+      document.body.appendChild(root)
+      router()
+  })
+  test('fetches error from an API and fails with 404 error', async () => {
+    jest.spyOn(mockStore, 'bills')
+    jest.spyOn(console, 'error').mockImplementation(() => {})
+    Object.defineProperty(Window, 'localStorage', {
+        value: localStorageMock
+    })
+    document.body.innerHTML = `<div id="root"></div>`
+    router()
+    const onNavigate = (pathname) => {
+        document.body.innerHTML = ROUTES({
+            pathname
+        })
+    }
+    mockStore.bills = jest.fn().mockImplementation(() => {
+        return {
+            update: () => Promise.reject(new Error('Erreur 404')),
+            list: () => Promise.reject(new Error('Erreur 404'))
+        }
+    })
   })
 })
